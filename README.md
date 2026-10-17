@@ -211,6 +211,13 @@ bun run lint   # eslint
 bun run build  # production build + type check
 ```
 
+## Demo paper
+
+`demo/paperlint-demo-paper.pdf` is a synthetic research paper seeded with
+realistic anomalies (recycled passages, inconsistent statistics, contradictions,
+overstated claims and citation problems) so you can exercise the full review
+flow.
+
 ## API routes
 
 | Route | Method | Purpose |
