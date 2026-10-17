@@ -1,69 +1,143 @@
-import Image from "next/image";
+import Link from "next/link";
+import { BarChart3, GitCompare, Link2, Shuffle } from "lucide-react";
+import { SectionKicker } from "@/components/brand";
+import { FeatureCard } from "@/components/FeatureCard";
+import { SiteFooter } from "@/components/SiteFooter";
+import { SiteHeader } from "@/components/SiteHeader";
+
+const features = [
+  {
+    icon: Shuffle,
+    title: "Test overlap",
+    description: "Flags near-duplicate statements",
+  },
+  {
+    icon: BarChart3,
+    title: "Statistical consistency",
+    description: "Checks against known baselines",
+  },
+  {
+    icon: GitCompare,
+    title: "Contradictions",
+    description: "Conflicting claims in one paper",
+  },
+  {
+    icon: Link2,
+    title: "Citations & structure",
+    description: "Missing, mismatched or orphaned",
+  },
+];
+
+const steps = [
+  {
+    n: "01",
+    title: "Algorithms find the conditions",
+    body: "We analyse your paper's structure, compositional statistics and overlap signals with FalkorDB graph algorithms.",
+  },
+  {
+    n: "02",
+    title: "AI adds the context",
+    body: "Our agent adds the surrounding evidence and reasoning, so you can see exactly what does not add up.",
+  },
+  {
+    n: "03",
+    title: "You stay in control",
+    body: "Every finding is yours to review, edit or dismiss. PaperLint never issues a final verdict on your work.",
+  },
+];
+
+const promises = ["Confidential by design", "Evidence-backed findings", "No account required"];
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <div className="flex min-h-screen flex-col">
+      <SiteHeader />
+
+      <main className="flex-1">
+        <section className="relative overflow-hidden border-b border-line">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -top-48 right-[-120px] h-[560px] w-[560px] rounded-full bg-[radial-gradient(circle_at_center,rgba(140,155,232,0.28),rgba(226,180,200,0.14)_45%,transparent_72%)] blur-2xl"
+          />
+          <div className="relative mx-auto max-w-6xl border-x border-line px-6 pb-16 pt-20">
+            <span className="kicker inline-flex items-center gap-2 rounded-full border border-line bg-paper px-3 py-1">
+              #1 for research paper integrity
+            </span>
+            <h1 className="mt-8 max-w-3xl font-display text-5xl leading-[1.04] tracking-tight text-ink sm:text-6xl">
+              Find the weak <span className="italic text-lav">signals</span> before reviewers do.
+            </h1>
+            <p className="mt-6 max-w-xl text-base leading-7 text-muted">
+              PaperLint reads your research paper for anomalies, contradictions and red flags - then
+              shows you exactly what to fix.
+            </p>
+            <Link
+              href="/chat"
+              className="mt-8 inline-flex rounded-full bg-navy px-6 py-3 text-sm text-paper transition-colors hover:bg-navy-soft"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+              Upload your paper
+            </Link>
+
+            <div id="checks" className="mt-20 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {features.map((feature) => (
+                <FeatureCard key={feature.title} {...feature} />
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section id="how" className="border-b border-line">
+          <div className="mx-auto grid max-w-6xl gap-16 border-x border-line px-6 py-20 lg:grid-cols-2">
+            <div>
+              <SectionKicker>a second pair of eyes</SectionKicker>
+              <h2 className="mt-4 max-w-sm font-display text-4xl leading-tight tracking-tight text-ink">
+                Rigor, without the verdict.
+              </h2>
+            </div>
+            <div className="divide-y divide-line border-t border-line">
+              {steps.map((step) => (
+                <div key={step.n} className="grid grid-cols-[3rem_1fr] gap-4 py-6">
+                  <span className="kicker pt-1">{step.n}</span>
+                  <div>
+                    <p className="text-sm font-medium text-ink">{step.title}</p>
+                    <p className="mt-2 max-w-md text-sm leading-6 text-muted">{step.body}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section id="approach" className="border-b border-line">
+          <div className="mx-auto grid max-w-6xl gap-10 border-x border-line px-6 py-20 lg:grid-cols-2 lg:items-center">
+            <div>
+              <SectionKicker>built for careful work</SectionKicker>
+              <h2 className="mt-4 max-w-sm font-display text-4xl leading-tight tracking-tight text-ink">
+                Your manuscript stays yours.
+              </h2>
+            </div>
+            <div className="space-y-6">
+              <div className="flex flex-wrap gap-2">
+                {promises.map((promise) => (
+                  <span
+                    key={promise}
+                    className="rounded-full border border-line bg-paper px-3 py-1 text-xs text-muted"
+                  >
+                    {promise}
+                  </span>
+                ))}
+              </div>
+              <Link
+                href="/chat"
+                className="inline-flex rounded-full border border-line px-5 py-2 text-sm text-ink transition-colors hover:bg-paper-soft"
+              >
+                Read our privacy
+              </Link>
+            </div>
+          </div>
+        </section>
       </main>
+
+      <SiteFooter />
     </div>
   );
 }
