@@ -1,0 +1,22 @@
+README.md
+  s_63eada9ac7506b::t_4c9146742c394d 219
+  s_63eada9ac7506b::t_7e3f7f6f5f471d 214-218,220
+demo/paperlint-demo-paper.pdf
+  s_63eada9ac7506b::t_67a80da9e3b6c3 1-124
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2768501acf91bd001bb6d5a5b2ef11fa319d458c",
+  "prompts": {},
+  "sessions": {
+    "s_63eada9ac7506b": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_eb4dd6894ffeYEjqoAciU7PMDR",
+        "model": "unknown"
+      },
+      "human_author": "Sundaram Kumar Jha <jhasundaram@outlook.com>"
+    }
+  }
+}
