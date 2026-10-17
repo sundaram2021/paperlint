@@ -18,11 +18,8 @@ you can chat about. There is no login.
 - You can ask follow-up questions; the agent queries the same graph and shows the
   algorithms and queries it runs.
 
-## Pages
-
-- `/` - landing page (server component).
-- `/chat` - upload, live review map, report and chat (server component mounting a
-  client workspace).
+## Demo
+https://www.loom.com/share/3b02e824f3db4e03abfb688114131c1d
 
 ## Architecture
 
