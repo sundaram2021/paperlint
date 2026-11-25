@@ -1,0 +1,35 @@
+name: Citation CI live acceptance
+on: pull_request
+permissions:
+  contents: read
+jobs:
+  published-link:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.3.14'
+      - run: bun install --frozen-lockfile
+      - name: Serve Paperlint from the PR head
+        run: |
+          npm run dev -- --hostname 127.0.0.1 --port 43111 > "$RUNNER_TEMP/paperlint.log" 2>&1 &
+          for i in {1..60}; do
+            if curl -s -o /dev/null http://127.0.0.1:43111/; then exit 0; fi
+            sleep 1
+          done
+          cat "$RUNNER_TEMP/paperlint.log"; exit 1
+      - uses: sundaram2021/citation-ci@c04fd2410bd37bc59da2cd259b79e45d0d0d47e4
+        with:
+          production: https://paperlint.vercel.app
+          preview: http://127.0.0.1:43111
+          source-repo: sundaram2021/sundaram2021
+          source-path: README.md
+          mode: enforce
