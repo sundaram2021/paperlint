@@ -1,0 +1,19 @@
+.github/workflows/citation-live.yml
+  s_feefab37bca6c7::t_25b8c519ecf795 1-35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "72467ff89937150c0d4fddbc2b62931457d3a7c1",
+  "prompts": {},
+  "sessions": {
+    "s_feefab37bca6c7": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_df1ff1721ffeSemEQ3vPC0eRui",
+        "model": "unknown"
+      },
+      "human_author": "Sundaram Kumar Jha <jhasundaram@outlook.com>"
+    }
+  }
+}
