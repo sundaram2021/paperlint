@@ -1,0 +1,30 @@
+name: Verify Citation CI PR comments
+on: pull_request
+permissions:
+  contents: read
+  pull-requests: write
+concurrency:
+  group: citation-comment-acceptance-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  compare:
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'test/citation-ci-comment-acceptance'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - name: Serve this revision's public assets
+        run: |
+          python3 -m http.server 43111 --bind 127.0.0.1 --directory public > "$RUNNER_TEMP/preview.log" 2>&1 &
+          curl -fsS --retry 8 --retry-connrefused http://127.0.0.1:43111/ -o /dev/null
+          echo https://paperlint.vercel.app/globe.svg > "$RUNNER_TEMP/links.txt"
+      - uses: sundaram2021/citation-ci@77b8eefdf222c86ec67242044ba750da56f24d23
+        with:
+          production: https://paperlint.vercel.app
+          preview: http://127.0.0.1:43111
+          file: ${{ runner.temp }}/links.txt
+          pr-comment: 'true'
+          mode: enforce
