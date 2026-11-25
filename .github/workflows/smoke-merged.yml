@@ -1,0 +1,59 @@
+name: Smoke test merged Citation CI
+on: pull_request
+permissions:
+  contents: read
+  pull-requests: write
+jobs:
+  smoke:
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'smoke/citation-ci-246d04c'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - name: Serve Paperlint assets with one missing destination
+        run: |
+          cp -r public "$RUNNER_TEMP/preview"
+          mv "$RUNNER_TEMP/preview/globe.svg" "$RUNNER_TEMP/original.svg"
+          python3 -m http.server 43111 --bind 127.0.0.1 --directory "$RUNNER_TEMP/preview" > "$RUNNER_TEMP/http.log" 2>&1 &
+          curl -fsS --retry 8 --retry-connrefused http://127.0.0.1:43111/ -o /dev/null
+          printf '%s\n' 'Landing Page,Visits,Referrer' '/globe.svg,"1,234",//ref.example/path?probe=smoke-query-value' > "$RUNNER_TEMP/links.csv"
+      - name: Detect regression and publish finding
+        id: broken
+        continue-on-error: true
+        uses: sundaram2021/citation-ci@246d04cad2daf9b25b126007c936be1813431019
+        with:
+          production: https://paperlint.vercel.app
+          preview: http://127.0.0.1:43111
+          file: ${{ runner.temp }}/links.csv
+          pr-comment: 'true'
+      - name: Verify failure and capture the real bot comment ID
+        env:
+          OUTCOME: ${{ steps.broken.outcome }}
+          CODE: ${{ steps.broken.outputs.exit-code }}
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          test "$OUTCOME" = failure && test "$CODE" = 1
+          gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" > "$RUNNER_TEMP/before.json"
+          jq -er '[.[]|select(.user.login=="github-actions[bot]" and (.body|contains("1 new regression,")) and (.body|contains("/globe.svg")) and (.body|contains("HTTP 404")))] | select(length==1) | .[0].id' "$RUNNER_TEMP/before.json" > "$RUNNER_TEMP/comment-id"
+          echo "Verified broken verdict and comment $(cat "$RUNNER_TEMP/comment-id")"
+          mv "$RUNNER_TEMP/original.svg" "$RUNNER_TEMP/preview/globe.svg"
+      - name: Verify repaired asset with the merged Action
+        id: fixed
+        uses: sundaram2021/citation-ci@246d04cad2daf9b25b126007c936be1813431019
+        with:
+          production: https://paperlint.vercel.app
+          preview: http://127.0.0.1:43111
+          file: ${{ runner.temp }}/links.csv
+          pr-comment: 'true'
+      - name: Assert original comment was updated
+        env:
+          CODE: ${{ steps.fixed.outputs.exit-code }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          test "$CODE" = 0
+          gh api "repos/$GITHUB_REPOSITORY/issues/comments/$(cat "$RUNNER_TEMP/comment-id")" --jq .body | tee "$RUNNER_TEMP/after.txt"
+          grep -F '1 checked, 0 new regressions, 0 inconclusive' "$RUNNER_TEMP/after.txt"
