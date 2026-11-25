@@ -1,0 +1,28 @@
+name: Smoke released v1
+on:
+  push:
+    branches: [smoke/released-v1]
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Serve Paperlint public assets
+        run: |
+          python3 -m http.server 43111 --bind 127.0.0.1 --directory public > "$RUNNER_TEMP/server.log" 2>&1 &
+          curl -fsS --retry 8 --retry-connrefused http://127.0.0.1:43111/globe.svg -o /dev/null
+          echo '/globe.svg' > "$RUNNER_TEMP/links.txt"
+      - uses: sundaram2021/citation-ci@v1
+        id: smoke
+        with:
+          production: https://paperlint.vercel.app
+          preview: http://127.0.0.1:43111
+          file: ${{ runner.temp }}/links.txt
+      - run: test "$CODE" = 0
+        env:
+          CODE: ${{ steps.smoke.outputs.exit-code }}

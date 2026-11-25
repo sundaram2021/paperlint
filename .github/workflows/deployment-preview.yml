@@ -1,0 +1,18 @@
+name: Check deployed documentation links
+on: deployment_status
+permissions:
+  contents: read
+jobs:
+  published-links:
+    if: github.event.deployment_status.state == 'success' && github.event.deployment.environment != 'Production' && github.event.deployment_status.environment_url != '' && github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: sundaram2021/citation-ci@v1 # Replace with a full commit SHA from main for strict pinning
+        with:
+          production: https://paperlint.vercel.app
+          preview: ${{ github.event.deployment_status.environment_url }}
+          source-repo: sundaram2021/sundaram2021
+          source-path: README.md
+          source-token: ${{ github.token }}
+          mode: report
